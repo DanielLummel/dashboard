@@ -1,0 +1,33 @@
+import { defineConfig, loadEnv } from 'vite';
+import laravel from 'laravel-vite-plugin';
+
+export default defineConfig(({ mode }) => {
+    const env = loadEnv(mode, process.cwd(), '');
+    const ddevHostname = env.DDEV_HOSTNAME;
+    const isDdev = Boolean(ddevHostname);
+
+    return {
+        plugins: [
+            laravel({
+                input: ['resources/css/app.css', 'resources/js/app.js'],
+                refresh: true,
+            }),
+        ],
+        server: {
+            host: '0.0.0.0',
+            port: 5173,
+            strictPort: true,
+            cors: true,
+            ...(isDdev
+                ? {
+                    origin: `https://${ddevHostname}:5173`,
+                    hmr: {
+                        host: ddevHostname,
+                        protocol: 'wss',
+                        clientPort: 5173,
+                    },
+                }
+                : {}),
+        },
+    };
+});

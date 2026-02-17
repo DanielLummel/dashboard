@@ -1,0 +1,16 @@
+name: dev-dashboard
+type: laravel
+docroot: public
+php_version: "8.2"
+webserver_type: nginx-fpm
+database:
+  type: postgres
+  version: "16"
+composer_version: "2"
+use_dns_when_possible: true
+xdebug_enabled: false
+web_extra_exposed_ports:
+  - name: vite
+    container_port: 5173
+    http_port: 5172
+    https_port: 5173
