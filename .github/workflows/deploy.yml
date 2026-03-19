@@ -1,0 +1,72 @@
+name: Deploy to All-Inkl
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, xml, curl, sqlite3, pdo, pdo_sqlite
+
+      - name: Install Composer dependencies
+        run: composer install --no-dev --optimize-autoloader --no-interaction
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Node dependencies & build assets
+        run: |
+          npm ci
+          npm run build
+
+      - name: Create .env for production
+        run: |
+          cp .env.example .env
+          sed -i 's|APP_ENV=local|APP_ENV=production|' .env
+          sed -i 's|APP_DEBUG=true|APP_DEBUG=false|' .env
+          sed -i "s|APP_URL=.*|APP_URL=${{ secrets.APP_URL }}|" .env
+          sed -i 's|DB_DATABASE=database/database.sqlite|DB_DATABASE=/www/htdocs/${{ secrets.FTP_USERNAME }}/app/database/database.sqlite|' .env
+          echo "APP_KEY=${{ secrets.APP_KEY }}" >> .env
+
+      - name: Deploy app files (ohne public/) via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./
+          server-dir: app/
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            **/public/**
+            **/.ddev/**
+            **/tests/**
+            **/.env.example
+            **/README.md
+
+      - name: Deploy public/ via FTP (in Webroot)
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./public/
+          server-dir: html/
+          exclude: |
+            **/.git*
+            **/.git*/**
