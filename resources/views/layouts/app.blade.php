@@ -7,6 +7,10 @@
 
         <title>{{ config('app.name', 'Developer Multi-Tool Dashboard') }}</title>
 
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+
         <script>
             (() => {
                 try {
@@ -23,7 +27,8 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body>
-        <div x-data="{ sidebarOpen: false }" class="min-h-screen">
+        <div id="cursor-glow" class="pointer-events-none fixed inset-0 z-[1]" aria-hidden="true"></div>
+        <div x-data="{ sidebarOpen: false }" class="relative z-[2] min-h-screen">
             <div class="lg:flex lg:min-h-screen">
                 @include('layouts.sidebar')
 

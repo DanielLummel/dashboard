@@ -33,23 +33,26 @@
 
         <div class="space-y-3">
             @forelse ($snippets as $snippet)
-                <a href="{{ route('snippets.show', $snippet) }}" class="panel block p-4 hover:bg-slate-50">
+                <a href="{{ route('snippets.show', $snippet) }}" class="module-card block p-4 transition-all duration-200 hover:shadow-md">
                     <div class="flex flex-wrap items-center justify-between gap-2">
-                        <h2 class="text-base font-semibold text-slate-900">{{ $snippet->title }}</h2>
-                        <div class="flex gap-2">
-                            <span class="badge">{{ $snippet->language }}</span>
+                        <h2 class="text-base font-semibold text-slate-900 dark:text-slate-100">{{ $snippet->title }}</h2>
+                        <div class="flex gap-1.5">
+                            <span class="badge-brand">{{ $snippet->language }}</span>
                             @if ($snippet->project)
                                 <span class="badge">{{ $snippet->project->name }}</span>
                             @endif
                         </div>
                     </div>
                     @if ($snippet->description)
-                        <p class="mt-2 text-sm text-slate-600">{{ $snippet->description }}</p>
+                        <p class="mt-1.5 text-sm text-slate-500 dark:text-slate-400">{{ $snippet->description }}</p>
                     @endif
-                    <pre class="mt-3 max-h-36 overflow-auto rounded-lg bg-slate-900 p-3 font-mono text-xs text-slate-100">{{ \Illuminate\Support\Str::limit($snippet->code, 240) }}</pre>
+                    <pre class="mt-3 max-h-32 overflow-auto rounded-lg bg-slate-950 p-3 font-mono text-xs leading-relaxed text-slate-200 dark:bg-slate-900">{{ \Illuminate\Support\Str::limit($snippet->code, 240) }}</pre>
                 </a>
             @empty
-                <div class="panel p-6 text-sm text-slate-500">Keine Snippets gefunden.</div>
+                <div class="panel p-8 text-center text-sm text-slate-400 dark:text-slate-500">
+                    <svg class="mx-auto mb-3 h-8 w-8 text-slate-300 dark:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" /></svg>
+                    Keine Snippets gefunden.
+                </div>
             @endforelse
         </div>
 

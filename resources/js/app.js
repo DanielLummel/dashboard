@@ -26,8 +26,17 @@ const applyTheme = (theme) => {
     rootElement.classList.toggle('dark', theme === 'dark');
     rootElement.dataset.theme = theme;
 
+    // Legacy text labels
     document.querySelectorAll('[data-theme-label]').forEach((label) => {
         label.textContent = theme === 'dark' ? 'Light' : 'Dark';
+    });
+
+    // Sun/moon icon toggle: sun visible in dark mode (to switch to light), moon in light mode
+    document.querySelectorAll('[data-theme-icon="light"]').forEach((icon) => {
+        icon.classList.toggle('hidden', theme !== 'dark');
+    });
+    document.querySelectorAll('[data-theme-icon="dark"]').forEach((icon) => {
+        icon.classList.toggle('hidden', theme === 'dark');
     });
 };
 
@@ -232,8 +241,44 @@ const initThemeToggle = () => {
     });
 };
 
+const initCursorEffects = () => {
+    const glow = document.getElementById('cursor-glow');
+
+    // Throttle with requestAnimationFrame for performance
+    let rafPending = false;
+    let cx = -200;
+    let cy = -200;
+
+    const flush = () => {
+        rafPending = false;
+        if (glow) {
+            glow.style.setProperty('--cx', `${cx}px`);
+            glow.style.setProperty('--cy', `${cy}px`);
+        }
+    };
+
+    window.addEventListener('mousemove', (e) => {
+        cx = e.clientX;
+        cy = e.clientY;
+        if (!rafPending) {
+            rafPending = true;
+            requestAnimationFrame(flush);
+        }
+    }, { passive: true });
+
+    // Per-card spotlight: track mouse relative to each panel
+    document.querySelectorAll('.panel').forEach((card) => {
+        card.addEventListener('mousemove', (e) => {
+            const r = card.getBoundingClientRect();
+            card.style.setProperty('--cx', `${e.clientX - r.left}px`);
+            card.style.setProperty('--cy', `${e.clientY - r.top}px`);
+        }, { passive: true });
+    });
+};
+
 initCopyButtons();
 initThemeToggle();
 initMarkdownPreview();
 initGlobalSearch();
 initRunningTimerLabels();
+initCursorEffects();
