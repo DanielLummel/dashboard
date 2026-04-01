@@ -6,8 +6,8 @@ define('LARAVEL_START', microtime(true));
 
 // Pfad zum App-Verzeichnis (außerhalb des Webroots auf Shared Hosting)
 // Auf dem Server liegt die App unter ~/app/, der Webroot unter ~/html/
-$appPath = is_dir(dirname(dirname(__DIR__)).'/app')
-    ? dirname(dirname(__DIR__)).'/app'
+$appPath = is_dir(dirname(__DIR__).'/app')
+    ? dirname(__DIR__).'/app'
     : dirname(__DIR__);
 
 // Determine if the application is in maintenance mode...
