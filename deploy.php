@@ -7,9 +7,10 @@ if (empty($token) || empty($storedToken) || !hash_equals($storedToken, $token)) 
     die('Forbidden');
 }
 
-$webRoot  = __DIR__;                    // html/
-$appRoot  = dirname($webRoot) . '/app'; // app/
-$zipFile  = dirname($webRoot) . '/deploy.zip';
+$webRoot = __DIR__;                    // html/
+$appRoot = dirname($webRoot) . '/app'; // app/
+$zipFile = dirname($webRoot) . '/deploy.zip';
+$test = '';
 
 if (!file_exists($zipFile)) {
     die('deploy.zip nicht gefunden');
